@@ -2,6 +2,7 @@ import pytest
 import allure
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
+from data import BASE_URL
 
 
 @allure.feature("Заказ самоката и переходы")
@@ -13,18 +14,22 @@ class TestScooterOrderAndLogos:
         ("Пётр", "Петров", "Москва, Тверская, 15", "Охотный Ряд", "+79992223344", "21.06.2026", "Оставить у двери", "grey")
     ]
 
-    @pytest.mark.parametrize("order_button_type", ["top", "bottom"])
+    @pytest.mark.parametrize(
+        "click_order_button",
+        [
+            MainPage.click_top_order_button,
+            MainPage.click_bottom_order_button
+        ],
+        ids=["top_button", "bottom_button"]
+    )
     @pytest.mark.parametrize("name, surname, address, metro, phone, date, comment, color", ORDER_DATA)
-    @allure.title("Позитивный сценарий заказа самоката (точка входа: {order_button_type})")
-    def test_positive_order_flow(self, driver, order_button_type, name, surname, address, metro, phone, date, comment, color):
+    @allure.title("Позитивный сценарий заказа самоката")
+    def test_positive_order_flow(self, driver, click_order_button, name, surname, address, metro, phone, date, comment, color):
         main_page = MainPage(driver)
         main_page.accept_cookies_if_needed()
 
-        # Выбираем точку входа (верхняя или нижняя кнопка)
-        if order_button_type == "top":
-            main_page.click_top_order_button()
-        else:
-            main_page.click_bottom_order_button()
+        # Вызываем метод напрямую без условных операторов
+        click_order_button(main_page)
 
         order_page = OrderPage(driver)
         # Заполняем первую часть формы
@@ -44,7 +49,7 @@ class TestScooterOrderAndLogos:
         main_page.click_top_order_button()   # Переходим на страницу заказа, чтобы было откуда возвращаться
         
         main_page.click_scooter_logo()
-        assert "qa-scooter.praktikum-services.ru" in driver.current_url
+        assert BASE_URL in driver.current_url
 
     @allure.title("Проверка редиректа на Дзен при клике на логотип Яндекса")
     def test_yandex_logo_redirect(self, driver):
@@ -56,6 +61,5 @@ class TestScooterOrderAndLogos:
         # Переключаемся на новую вкладку
         driver.switch_to.window(driver.window_handles[1])
         
-        # Проверяем URL (или наличие элементов Дзена, так как редирект ведет туда)
-        # Обрати внимание: Яндекс Дзен иногда открывает страницу проверки/загрузки, проверяем, что вкладка открылась
+        # Проверяем, что новая вкладка открылась
         assert len(driver.window_handles) > 1, "Новая вкладка с Дзеном не открылась!"
