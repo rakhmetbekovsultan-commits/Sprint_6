@@ -49,7 +49,7 @@ class TestScooterOrderAndLogos:
         main_page.click_top_order_button()   # Переходим на страницу заказа, чтобы было откуда возвращаться
         
         main_page.click_scooter_logo()
-        assert BASE_URL in driver.current_url
+        assert "qa-scooter.praktikum-services.ru" in driver.current_url
 
     @allure.title("Проверка редиректа на Дзен при клике на логотип Яндекса")
     def test_yandex_logo_redirect(self, driver):
