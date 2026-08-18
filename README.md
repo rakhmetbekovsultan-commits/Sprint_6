@@ -1,2 +1,1 @@
-Sprint_6 Yandex Samokat# 
-
+Sprint_6 Yandex Samokat#
