@@ -2,7 +2,7 @@ import pytest
 import allure
 from pages.main_page import MainPage
 from pages.order_page import OrderPage
-from data import BASE_URL
+from pages.base_page import BasePage
 
 
 @allure.feature("Заказ самоката и переходы")
